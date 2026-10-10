@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}{{ project.title }}{% endblock %}
+{% block content %}
+<div class="wrap" style="padding:2rem 0 4rem">
+  <p class="kicker">Engagement</p>
+  <h1>{{ project.title }}</h1>
+  <p>{{ project.brand.company }} hired {{ project.creator.user.name }}{% if project.brief %} from <a href="{{ url_for('brief_detail', bid=project.brief.id) }}">{{ project.brief.title }}</a>{% endif %}.</p>
+  <div class="pipeline" role="list">
+    {% for s in stages %}
+    <div class="pipe {% if s==project.stage %}on{% elif stages.index(s) < stages.index(project.stage) %}done{% endif %}" role="listitem">{{ s }}</div>
+    {% endfor %}
+  </div>
+  <article class="panel">
+    <p>Budget ${{ project.budget }}</p>
+    <p>{{ project.notes }}</p>
+    <form method="post">
+      <label for="stage">Update stage</label>
+      <select id="stage" name="stage">
+        {% for s in stages %}<option {% if s==project.stage %}selected{% endif %}>{{ s }}</option>{% endfor %}
+      </select>
+      <button class="btn primary" type="submit">Save stage</button>
+    </form>
+  </article>
+</div>
+{% endblock %}

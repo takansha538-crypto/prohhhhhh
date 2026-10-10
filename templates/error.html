@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ code }}{% endblock %}
+{% block content %}
+<div class="wrap empty-state" style="padding:4rem 0">
+  <p class="kicker">{{ code }}</p>
+  <h1>{{ message }}</h1>
+  <a class="btn primary" href="{{ url_for('index') }}">Back home</a>
+  <a class="btn" href="{{ url_for('demo_guide') }}">Demo guide</a>
+</div>
+{% endblock %}

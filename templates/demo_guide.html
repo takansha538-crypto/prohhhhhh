@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Demo guide{% endblock %}
+{% block content %}
+<div class="wrap" style="padding:2.5rem 0 4rem">
+  <p class="kicker">Hackathon demo control</p>
+  <h1>Ten-minute judging path</h1>
+  <p class="lede">Start as <a href="{{ url_for('demo_brand') }}">Demo as Brand</a> (NovaFrame). Keep this page in a tab. Nothing here is a popup.</p>
+  <ol class="guide-ol">
+    <li><a href="{{ url_for('discover') }}">Discover a creator</a> — open Find Creators.</li>
+    <li><a href="{{ url_for('discover', tool='Runway', spec='AI Filmmaker') }}">Filter by AI skills/tools</a> — Runway + AI Filmmaker.</li>
+    <li>Open <a href="{{ url_for('creator_profile', slug='aria-chen') }}">Aria Chen</a>, then a portfolio piece such as <a href="{{ url_for('portfolio_detail', pid=1) }}">Helix Night Atelier</a>.</li>
+    <li>Hover verification badges (Profile → Trusted). Read the tooltip copy.</li>
+    <li><a href="{{ url_for('create_brief') }}">Create an AI-assisted brief</a> using “I need a futuristic product launch video for an AI startup.”</li>
+    <li>On the published brief, read <strong>AI Match %</strong> and the why-text.</li>
+    <li>Shortlist via Save on a recommended creator.</li>
+    <li><a href="{{ url_for('messages') }}">Connect / message</a> — NovaFrame already has threads with Aria and Marcus.</li>
+    <li>Hire from Aria’s profile or accept Kenji’s application (Lumina cabin is already in Production).</li>
+    <li><a href="{{ url_for('projects') }}">Track project</a> stages Discovery → Completed.</li>
+  </ol>
+  <p><a class="btn" href="{{ url_for('demo_creator') }}">Switch to creator demo (Aria)</a> to apply, edit profile, and add a portfolio item.</p>
+  <p><a href="{{ url_for('presentation') }}">Internal presentation slides</a></p>
+</div>
+{% endblock %}

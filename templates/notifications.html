@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% from "_macros.html" import empty %}
+{% block title %}Notifications{% endblock %}
+{% block content %}
+<div class="wrap" style="padding:2rem 0 4rem">
+  <div class="toolbar">
+    <h1>Notifications</h1>
+    <form method="post" action="{{ url_for('notifications_read') }}"><button class="btn sm" type="submit">Mark all read</button></form>
+  </div>
+  {% if not items %}
+    {{ empty("No notifications.", "Activity from applications, views, and connections will appear here.") }}
+  {% endif %}
+  {% for n in items %}
+  <article class="panel" style="margin-bottom:0.6rem;opacity:{% if n.is_read %}0.7{% else %}1{% endif %}">
+    <h3>{{ n.title }}</h3>
+    <p>{{ n.body }}</p>
+    {% if n.link %}<a href="{{ n.link }}">Open</a>{% endif %}
+  </article>
+  {% endfor %}
+</div>
+{% endblock %}

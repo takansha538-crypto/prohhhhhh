@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Create a brief{% endblock %}
+{% block content %}
+<div class="wrap wizard">
+  <ol class="steps" aria-label="Brief steps">
+    <li class="active">1 · Intent</li>
+    <li>2 · Creative</li>
+    <li>3 · Specs</li>
+    <li>4 · Commercial</li>
+    <li>5 · Review</li>
+  </ol>
+  <form id="briefForm" method="post">
+    <input type="hidden" name="ai_generated" value="0">
+    <div class="ai-box">
+      <p class="kicker">AI-assisted brief builder</p>
+      <h2>Start from a rough idea</h2>
+      <p class="small muted">{% if ai_live %}A live AI provider is configured.{% else %}No API key is set — a local intelligent layer will structure your idea. The rest of CreatorsHub works either way.{% endif %}</p>
+      <label for="idea">Rough idea</label>
+      <textarea id="idea" placeholder="I need a futuristic product launch video for an AI startup."></textarea>
+      <p><button class="btn accent" type="button" id="generateBrief">Generate structured brief</button></p>
+      <p class="small" id="aiStatus"></p>
+    </div>
+
+    <section class="step-panel active">
+      <h2>Campaign intent</h2>
+      <label for="title">Campaign title</label>
+      <input id="title" name="title" data-required required>
+      <label for="description">Campaign description</label>
+      <textarea id="description" name="description"></textarea>
+      <label for="content_type">Content type</label>
+      <input id="content_type" name="content_type" value="Video">
+      <label for="creative_goal">Creative goal</label>
+      <input id="creative_goal" name="creative_goal">
+      <p><button class="btn primary" type="button" data-next>Continue</button></p>
+    </section>
+
+    <section class="step-panel">
+      <h2>Style & AI requirements</h2>
+      <label for="style">Style</label>
+      <input id="style" name="style">
+      <label for="visual_direction">Visual direction</label>
+      <textarea id="visual_direction" name="visual_direction"></textarea>
+      <label for="ai_requirements">AI requirements</label>
+      <textarea id="ai_requirements" name="ai_requirements"></textarea>
+      <p>Required skills</p>
+      <div class="check-grid">
+        {% for s in skills %}<label><input type="checkbox" name="skills" value="{{ s.name }}"> {{ s.name }}</label>{% endfor %}
+      </div>
+      <p>Preferred AI tools / models</p>
+      <div class="check-grid">
+        {% for t in tools %}<label><input type="checkbox" name="tools" value="{{ t.name }}"> {{ t.name }}</label>{% endfor %}
+      </div>
+      <p><button class="btn ghost" type="button" data-prev>Back</button> <button class="btn primary" type="button" data-next>Continue</button></p>
+    </section>
+
+    <section class="step-panel">
+      <h2>Specifications</h2>
+      <label for="format">Format</label>
+      <input id="format" name="format" value="MP4">
+      <label for="aspect_ratio">Aspect ratio</label>
+      <input id="aspect_ratio" name="aspect_ratio" value="16:9">
+      <label for="resolution">Resolution</label>
+      <input id="resolution" name="resolution" value="4K">
+      <label for="quantity">Quantity</label>
+      <input id="quantity" name="quantity" type="number" value="1" min="1">
+      <label for="deadline">Deadline / timeline</label>
+      <input id="deadline" name="deadline">
+      <label for="deliverables">Deliverables</label>
+      <textarea id="deliverables" name="deliverables"></textarea>
+      <p><button class="btn ghost" type="button" data-prev>Back</button> <button class="btn primary" type="button" data-next>Continue</button></p>
+    </section>
+
+    <section class="step-panel">
+      <h2>Commercial terms</h2>
+      <label for="budget_min">Budget min (USD)</label>
+      <input id="budget_min" name="budget_min" type="number" value="3000">
+      <label for="budget_max">Budget max (USD)</label>
+      <input id="budget_max" name="budget_max" type="number" value="8000">
+      <label for="commercial_use">Commercial-use requirements</label>
+      <input id="commercial_use" name="commercial_use">
+      <label for="licensing">Licensing requirements</label>
+      <input id="licensing" name="licensing">
+      <label for="revisions">Revision rounds</label>
+      <input id="revisions" name="revisions" type="number" value="2">
+      <label for="reference_links">Reference links</label>
+      <input id="reference_links" name="reference_links">
+      <label for="notes">Additional notes</label>
+      <textarea id="notes" name="notes"></textarea>
+      <p><button class="btn ghost" type="button" data-prev>Back</button> <button class="btn primary" type="button" data-next>Review</button></p>
+    </section>
+
+    <section class="step-panel">
+      <h2>Publish</h2>
+      <p>Check fields above, then publish. Matching will rank creators by skills, tools, specialization, availability, and budget.</p>
+      <p><button class="btn ghost" type="button" data-prev>Back</button> <button class="btn primary" type="submit">Publish brief</button></p>
+    </section>
+  </form>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/brief.js') }}"></script>{% endblock %}

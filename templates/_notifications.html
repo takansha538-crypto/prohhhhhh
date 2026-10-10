@@ -1,0 +1,9 @@
+{% if not items %}
+<p class="muted small">No notifications yet.</p>
+{% endif %}
+{% for n in items %}
+<a href="{{ n.link or url_for('notifications') }}">
+  <strong>{{ n.title }}</strong><br>
+  <span class="muted small">{{ n.body }}</span>
+</a>
+{% endfor %}

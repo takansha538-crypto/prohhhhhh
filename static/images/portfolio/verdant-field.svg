@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">
+  <rect width="800" height="500" fill="#3A4630"/>
+  <circle cx="620" cy="120" r="160" fill="#DCC8A8" fill-opacity="0.35"/>
+  <rect x="80" y="320" width="280" height="8" fill="#DCC8A8"/>
+  <text x="80" y="300" font-family="Georgia, serif" font-size="36" fill="#F3EFE8">Verdant Field Notes</text>
+  <text x="80" y="360" font-family="system-ui, sans-serif" font-size="16" fill="#F3EFE8" fill-opacity="0.7">CreatorsHub portfolio · demo visual</text>
+</svg>

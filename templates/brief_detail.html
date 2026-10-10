@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% from "_macros.html" import badges %}
+{% block title %}{{ brief.title }}{% endblock %}
+{% block content %}
+<div class="wrap profile-sections" style="padding-top:2rem">
+  <div>
+    <p class="kicker">Brief · {{ brief.brand.company }}</p>
+    <h1>{{ brief.title }}</h1>
+    {% if brief.ai_generated %}<p class="chip">Drafted with AI-assisted brief builder</p>{% endif %}
+    <article class="panel">
+      <h2>Campaign overview</h2>
+      <p>{{ brief.description }}</p>
+      <h3>Creative goal</h3>
+      <p>{{ brief.creative_goal }}</p>
+      <h3>Style & visual direction</h3>
+      <p>{{ brief.style }}</p>
+      <p>{{ brief.visual_direction }}</p>
+      <h3>AI requirements</h3>
+      <p>{{ brief.ai_requirements }}</p>
+      <h3>Deliverables</h3>
+      <p>{{ brief.deliverables }}</p>
+      <h3>Notes</h3>
+      <p>{{ brief.notes or "—" }}</p>
+    </article>
+    {% if current_user and current_user.role=='brand' and brief.applications %}
+    <article class="panel" style="margin-top:1rem">
+      <h2>Applications</h2>
+      {% for a in brief.applications %}
+      <div class="person-row">
+        <img class="avatar sm" src="{{ a.creator.user.avatar }}" alt="">
+        <div class="grow">
+          <a href="{{ url_for('creator_profile', slug=a.creator.slug) }}">{{ a.creator.user.name }}</a>
+          <p class="small muted">{{ a.status }} · ${{ a.proposed_budget }} · {{ a.estimated_delivery }}</p>
+        </div>
+        {% if current_user.brand_profile and current_user.brand_profile.id == brief.brand_id %}
+        <form method="post" action="{{ url_for('application_status', aid=a.id) }}">
+          <select name="status" aria-label="Status">
+            {% for s in ['Applied','Shortlisted','Interview','Accepted','Rejected','Completed'] %}
+            <option {% if a.status==s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+          </select>
+          <button class="btn sm" type="submit">Update</button>
+        </form>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </article>
+    {% endif %}
+  </div>
+  <aside>
+    <article class="panel">
+      <dl class="meta-list">
+        <dt>Brand</dt><dd><a href="{{ url_for('brand_profile', slug=brief.brand.slug) }}">{{ brief.brand.company }}</a></dd>
+        <dt>Content type</dt><dd>{{ brief.content_type }}</dd>
+        <dt>Format / ratio / res</dt><dd>{{ brief.format }} · {{ brief.aspect_ratio }} · {{ brief.resolution }}</dd>
+        <dt>Quantity</dt><dd>{{ brief.quantity }}</dd>
+        <dt>Deadline</dt><dd>{{ brief.deadline }}</dd>
+        <dt>Budget</dt><dd>${{ brief.budget_min }}–{{ brief.budget_max }}</dd>
+        <dt>Commercial use</dt><dd>{{ brief.commercial_use }}</dd>
+        <dt>Licensing</dt><dd>{{ brief.licensing }}</dd>
+        <dt>Revisions</dt><dd>{{ brief.revisions }} rounds</dd>
+        <dt>Tools</dt><dd>{{ brief.tools|map(attribute='name')|join(', ') }}</dd>
+        <dt>Skills</dt><dd>{{ brief.skills|map(attribute='name')|join(', ') }}</dd>
+        <dt>References</dt><dd>{{ brief.reference_links or "—" }}</dd>
+      </dl>
+      {% if current_user and current_user.creator_profile %}
+        {% if applied %}
+        <p class="muted">You have applied.</p>
+        {% else %}
+        <p><a class="btn primary full" href="{{ url_for('apply_brief', bid=brief.id) }}">Apply</a></p>
+        {% endif %}
+      {% elif not current_user %}
+      <a class="btn primary full" href="{{ url_for('login', next=url_for('apply_brief', bid=brief.id)) }}">Sign in to apply</a>
+      {% endif %}
+    </article>
+    <article class="panel" style="margin-top:1rem">
+      <h3>Recommended creators</h3>
+      <p class="small muted">Rule-based AI Match using skills, tools, specialization, availability, and budget — not a trained model.</p>
+      {% for m in ranked %}
+      <div class="person-row">
+        <img class="avatar sm" src="{{ m.creator.user.avatar }}" alt="">
+        <div class="grow">
+          <a href="{{ url_for('creator_profile', slug=m.creator.slug) }}">{{ m.name }}</a>
+          <p class="match">AI Match: {{ m.score }}%</p>
+          <p class="small muted">{{ m.why }}</p>
+          {{ badges(badges_fn(m.creator), compact=true) }}
+        </div>
+        {% if current_user and current_user.role=='brand' %}
+        <form method="post" action="{{ url_for('save_creator', cid=m.creator.id) }}"><button class="btn sm ghost" type="submit">Shortlist</button></form>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </article>
+  </aside>
+</div>
+{% endblock %}

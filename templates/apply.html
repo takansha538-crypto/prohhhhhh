@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Apply · {{ brief.title }}{% endblock %}
+{% block content %}
+<div class="wrap" style="padding:2rem 0 4rem;max-width:720px">
+  <p class="kicker">Application</p>
+  <h1>{{ brief.title }}</h1>
+  <p class="muted">{{ brief.brand.company }} · ${{ brief.budget_min }}–{{ brief.budget_max }}</p>
+  <form method="post" class="panel">
+    <label for="cover_message">Cover message</label>
+    <textarea id="cover_message" name="cover_message" required minlength="20" placeholder="Why this brief, which projects, and how you will license the work."></textarea>
+    <label for="proposed_budget">Proposed budget (USD)</label>
+    <input id="proposed_budget" name="proposed_budget" type="number" required>
+    <label for="estimated_delivery">Estimated delivery</label>
+    <input id="estimated_delivery" name="estimated_delivery" placeholder="12 days">
+    <p>Relevant portfolio</p>
+    {% for p in creator.portfolio %}
+    <label><input type="checkbox" name="portfolio" value="{{ p.id }}"> {{ p.title }}</label>
+    {% else %}
+    <p class="muted">Add portfolio items from your dashboard first.</p>
+    {% endfor %}
+    <p><button class="btn primary" type="submit">Submit application</button></p>
+  </form>
+</div>
+{% endblock %}

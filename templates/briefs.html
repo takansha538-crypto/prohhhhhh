@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% from "_macros.html" import empty %}
+{% block title %}Creative briefs{% endblock %}
+{% block content %}
+<div class="wrap" style="padding:2rem 0 4rem">
+  <p class="kicker">Briefs marketplace</p>
+  <div class="toolbar">
+    <h1>Open campaigns</h1>
+    {% if current_user and current_user.role=='brand' %}
+    <a class="btn primary" href="{{ url_for('create_brief') }}">Create a brief</a>
+    {% endif %}
+  </div>
+  <form class="search-bar" method="get">
+    <label class="sr-only" for="q">Search briefs</label>
+    <input id="q" name="q" value="{{ filters.get('q','') }}" placeholder="Search campaign, style, goal">
+    <select name="content" aria-label="Content type">
+      <option value="">Content type</option>
+      {% for t in types %}<option {% if filters.get('content')==t %}selected{% endif %}>{{ t }}</option>{% endfor %}
+    </select>
+    <select name="tool" aria-label="Tool">
+      <option value="">Tool</option>
+      {% for t in tools %}<option value="{{ t.name }}" {% if filters.get('tool')==t.name %}selected{% endif %}>{{ t.name }}</option>{% endfor %}
+    </select>
+    <select name="skill" aria-label="Skill">
+      <option value="">Skill</option>
+      {% for s in skills %}<option value="{{ s.name }}" {% if filters.get('skill')==s.name %}selected{% endif %}>{{ s.name }}</option>{% endfor %}
+    </select>
+    <button class="btn primary" type="submit">Search</button>
+    <a class="btn ghost" href="{{ url_for('briefs') }}">Clear</a>
+  </form>
+  {% if not briefs %}
+    {{ empty("No briefs match these filters.", "Try another content type or clear filters.", url_for('briefs'), "Clear filters") }}
+  {% else %}
+  <div class="results-grid">
+    {% for b in briefs %}
+    <article class="brief-card">
+      <p class="small muted">{{ b.brand.company }} · {{ b.content_type }}</p>
+      <h3><a href="{{ url_for('brief_detail', bid=b.id) }}">{{ b.title }}</a></h3>
+      <p>{{ b.style }}</p>
+      <p class="chip-row">{% for t in b.tools[:3] %}<span class="chip ghost">{{ t.name }}</span>{% endfor %}</p>
+      <p class="chip-row">{% for s in b.skills[:3] %}<span class="chip">{{ s.name }}</span>{% endfor %}</p>
+      <p class="price">${{ b.budget_min }}–{{ b.budget_max }} · due {{ b.deadline }}</p>
+      <p class="small muted">{{ b.commercial_use }}</p>
+      <a class="btn sm primary" href="{{ url_for('brief_detail', bid=b.id) }}">View & apply</a>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

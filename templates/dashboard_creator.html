@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% from "_macros.html" import badges as render_badges %}
+{% block title %}Creator dashboard{% endblock %}
+{% block content %}
+<div class="wrap" style="padding-top:2rem">
+  <p class="kicker">Creator dashboard</p>
+  <div class="toolbar">
+    <h1>{{ current_user.name }}</h1>
+    <div>
+      <button class="btn sm ghost" type="button" id="editProfile">Edit profile</button>
+      <button class="btn sm" type="button" id="addProject">Add portfolio project</button>
+      <a class="btn sm primary" href="{{ url_for('creator_profile', slug=creator.slug) }}">View public profile</a>
+    </div>
+  </div>
+  <div class="dash-grid">
+    <div>
+      <div class="grid-3">
+        <article class="card metric"><strong data-count="{{ creator.profile_views }}">{{ creator.profile_views
+            }}</strong>
+          <p class="muted">Profile views</p>
+        </article>
+        <article class="card metric"><strong>{{ applications|length }}</strong>
+          <p class="muted">Applications</p>
+        </article>
+        <article class="card metric"><strong>${{ "{:,}".format(creator.earnings_ytd) }}</strong>
+          <p class="muted">YTD (demo)</p>
+        </article>
+      </div>
+      <article class="panel" style="margin-top:1rem">
+        <h2>Profile completion</h2>
+        <div class="progress" aria-label="{{ completion }}% complete"><span style="width:{{ completion }}%"></span>
+        </div>
+        <p class="small">{{ completion }}% · {{ creator.availability }}</p>
+        {{ render_badges(badges) }}
+      </article>
+      <article class="panel" style="margin-top:1rem">
+        <h2>Portfolio overview</h2>
+        {% for p in creator.portfolio %}
+        <p><a href="{{ url_for('portfolio_detail', pid=p.id) }}">{{ p.title }}</a> · {{ p.content_type }}</p>
+        {% else %}
+        <p class="muted">No projects yet. Add one to be discoverable with work.</p>
+        {% endfor %}
+      </article>
+      <article class="panel" style="margin-top:1rem">
+        <h2>Applications</h2>
+        {% for a in applications %}
+        <p>{{ a.brief.title }} · <strong>{{ a.status }}</strong></p>
+        {% else %}
+        <p class="muted">No applications. <a href="{{ url_for('briefs') }}">Browse briefs</a>.</p>
+        {% endfor %}
+      </article>
+      <article class="panel" style="margin-top:1rem">
+        <h2>Active projects</h2>
+        {% for p in projects %}
+        <p><a href="{{ url_for('project_detail', pid=p.id) }}">{{ p.title }}</a> · {{ p.stage }}</p>
+        {% else %}
+        <p class="muted">No active projects.</p>
+        {% endfor %}
+      </article>
+    </div>
+    <aside>
+      <article class="panel">
+        <h3>Saved opportunities</h3>
+        <p><a href="{{ url_for('briefs') }}">Open briefs marketplace</a></p>
+        <h3>Messages</h3>
+        <p><a href="{{ url_for('messages') }}">Inbox</a></p>
+        <h3>Connections</h3>
+        <p><a href="{{ url_for('connections') }}">Network</a></p>
+      </article>
+      <form id="profileForm" class="panel" style="margin-top:1rem" method="post" hidden>
+        <input type="hidden" name="form" value="profile">
+        <h3>Edit profile</h3>
+        <label>Headline<input name="headline" value="{{ creator.headline }}"></label>
+        <label>Location<input name="location" value="{{ current_user.location }}"></label>
+        <label>Bio<textarea name="bio">{{ creator.bio }}</textarea></label>
+        <label>Workflow<textarea name="workflow">{{ creator.workflow }}</textarea></label>
+        <label>Commercial use<textarea name="commercial_use">{{ creator.commercial_use }}</textarea></label>
+        <label>Content types<input name="content_types" value="{{ creator.content_types }}"></label>
+        <label>Languages<input name="languages" value="{{ creator.languages }}"></label>
+        <label>Availability
+          <select name="availability">
+            {% for a in ['Available','Limited','Booked'] %}<option {% if creator.availability==a %}selected{% endif %}>
+              {{ a }}</option>{% endfor %}
+          </select>
+        </label>
+        <label>Hourly<input type="number" name="hourly_rate" value="{{ creator.hourly_rate }}"></label>
+        <label>Project min<input type="number" name="project_rate_min" value="{{ creator.project_rate_min }}"></label>
+        <label>Project max<input type="number" name="project_rate_max" value="{{ creator.project_rate_max }}"></label>
+        <label>Years<input type="number" name="experience_years" value="{{ creator.experience_years }}"></label>
+        <p>Skills</p>
+        <div class="check-grid">{% for s in skills %}<label><input type="checkbox" name="skills" value="{{ s.name }}" {%
+              if s in creator.skills %}checked{% endif %}> {{ s.name }}</label>{% endfor %}</div>
+        <p>AI tools</p>
+        <div class="check-grid">{% for t in tools %}<label><input type="checkbox" name="tools" value="{{ t.name }}" {%
+              if t in creator.tools %}checked{% endif %}> {{ t.name }}</label>{% endfor %}</div>
+        <p>Specializations</p>
+        <div class="check-grid">{% for s in specs %}<label><input type="checkbox" name="specs" value="{{ s.name }}" {%
+              if s in creator.specializations %}checked{% endif %}> {{ s.name }}</label>{% endfor %}</div>
+        <p><button class="btn primary" type="submit">Save profile</button></p>
+      </form>
+      <form id="portfolioForm" class="panel" style="margin-top:1rem" method="post" hidden>
+        <input type="hidden" name="form" value="portfolio">
+        <h3>Add portfolio project</h3>
+        <label>Title<input name="title" required></label>
+        <label>Description<textarea name="description"></textarea></label>
+        <label>Content type<input name="content_type" value="Video"></label>
+        <label>Workflow<textarea name="workflow"></textarea></label>
+        <label>Commercial use<input name="commercial_use" value="Commercial licensed"></label>
+        <label>License<input name="license_info"></label>
+        <label>Aspect<input name="aspect_ratio" value="16:9"></label>
+        <label>Outcome<textarea name="outcome"></textarea></label>
+        <p><button class="btn primary" type="submit">Add project</button></p>
+      </form>
+    </aside>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>{% endblock %}

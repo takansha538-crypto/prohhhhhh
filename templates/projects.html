@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% from "_macros.html" import empty %}
+{% block title %}Projects{% endblock %}
+{% block content %}
+<div class="wrap" style="padding:2rem 0 4rem">
+  <h1>Projects</h1>
+  {% if not projects %}
+    {{ empty("No projects yet.", "Hire a creator or accept an application to open an engagement.", url_for('discover'), "Find creators") }}
+  {% else %}
+  {% for p in projects %}
+  <article class="panel" style="margin-bottom:0.8rem">
+    <h3><a href="{{ url_for('project_detail', pid=p.id) }}">{{ p.title }}</a></h3>
+    <p>{{ p.brand.company }} × {{ p.creator.user.name }} · {{ p.stage }} · ${{ p.budget }}</p>
+  </article>
+  {% endfor %}
+  {% endif %}
+</div>
+{% endblock %}

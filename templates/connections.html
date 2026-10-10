@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% from "_macros.html" import empty %}
+{% block title %}Connections{% endblock %}
+{% block content %}
+<div class="wrap tabbed" style="padding:2rem 0 4rem">
+  <h1>Connections</h1>
+  <div class="tabs">
+    <button type="button" class="on" data-tab="mine">My Connections</button>
+    <button type="button" data-tab="req">Requests</button>
+    <button type="button" data-tab="fol">Following</button>
+  </div>
+  <section data-pane="mine">
+    {% for c in accepted %}
+      {% set other = c.addressee if c.requester_id==current_user.id else c.requester %}
+      <div class="person-row">
+        <img class="avatar sm" src="{{ other.avatar }}" alt="">
+        <div class="grow"><strong>{{ other.name }}</strong><p class="small muted">{{ other.role|title }} · {{ other.location }}</p></div>
+        <div class="row-actions">
+          <a class="btn sm ghost" href="{{ url_for('conversation', uid=other.id) }}">Message</a>
+          <form method="post" action="{{ url_for('connection_action', cid=c.id, action='remove') }}"><button class="btn sm" type="submit">Remove</button></form>
+        </div>
+      </div>
+    {% else %}
+      {{ empty("No connections yet.", "Send a request from a creator or brand profile.", url_for('discover'), "Find creators") }}
+    {% endfor %}
+  </section>
+  <section data-pane="req" hidden>
+    <h2>Incoming</h2>
+    {% for c in incoming %}
+    <div class="person-row">
+      <img class="avatar sm" src="{{ c.requester.avatar }}" alt="">
+      <div class="grow">{{ c.requester.name }}</div>
+      <form method="post" action="{{ url_for('connection_action', cid=c.id, action='accept') }}"><button class="btn sm primary" type="submit">Accept</button></form>
+      <form method="post" action="{{ url_for('connection_action', cid=c.id, action='reject') }}"><button class="btn sm" type="submit">Reject</button></form>
+    </div>
+    {% else %}
+    <p class="muted">No incoming requests.</p>
+    {% endfor %}
+    <h2>Outgoing</h2>
+    {% for c in outgoing %}
+    <div class="person-row">
+      <img class="avatar sm" src="{{ c.addressee.avatar }}" alt="">
+      <div class="grow">{{ c.addressee.name }} · pending</div>
+    </div>
+    {% else %}
+    <p class="muted">No outgoing requests.</p>
+    {% endfor %}
+  </section>
+  <section data-pane="fol" hidden>
+    {% for f in following %}
+    <div class="person-row">
+      <img class="avatar sm" src="{{ f.followed.avatar }}" alt="">
+      <div class="grow"><strong>{{ f.followed.name }}</strong><p class="small muted">{{ f.followed.role|title }}</p></div>
+      <form method="post" action="{{ url_for('follow', uid=f.followed_id) }}"><button class="btn sm" type="submit">Unfollow</button></form>
+    </div>
+    {% else %}
+      {{ empty("You are not following anyone.", "Follow from a profile to keep them in this list.", url_for('discover'), "Discover") }}
+    {% endfor %}
+  </section>
+</div>
+{% endblock %}

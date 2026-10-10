@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Join CreatorsHub{% endblock %}
+{% block content %}
+<div class="auth-page">
+  <div class="card auth-card">
+    <a class="brand" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='images/logo.svg') }}" width="32" height="32" alt=""><span>CreatorsHub</span></a>
+    <h1 class="serif" style="font-size:2rem;margin-top:1rem">Create an account</h1>
+    <form method="post">
+      <label for="name">Full name</label>
+      <input id="name" name="name" required>
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" required>
+      <label for="password">Password (min 6)</label>
+      <input id="password" name="password" type="password" minlength="6" required>
+      <label for="location">Location</label>
+      <input id="location" name="location" placeholder="City, country">
+      <p class="small" style="margin-top:0.8rem">I am joining as</p>
+      <div class="role-toggle">
+        <label><input type="radio" name="role" value="creator" checked> Creator</label>
+        <label><input type="radio" name="role" value="brand"> Brand / Agency</label>
+      </div>
+      <label for="headline">Headline (creators)</label>
+      <input id="headline" name="headline" placeholder="AI Filmmaker · product worlds">
+      <label for="company">Company (brands)</label>
+      <input id="company" name="company" placeholder="Studio or brand name">
+      <p><button class="btn primary full" type="submit" style="margin-top:1rem">Create account</button></p>
+    </form>
+    <p class="small">Prefer a seeded account? <a href="{{ url_for('login') }}">Explore Demo</a></p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% from "_macros.html" import badges as render_badges %}
+{% block title %}{{ creator.user.name }}{% endblock %}
+{% block content %}
+<section class="profile-hero">
+  <div class="wrap">
+    <img class="avatar lg" src="{{ creator.user.avatar }}" alt="{{ creator.user.name }}">
+    <div>
+      <p class="kicker">Creator profile</p>
+      <h1>{{ creator.user.name }}</h1>
+      <p>{{ creator.headline }}</p>
+      <p class="muted">{{ creator.user.location }} · {{ creator.availability }} · {{ creator.languages }}</p>
+      {{ render_badges(badges) }}
+    </div>
+    <div class="actions">
+      {% if current_user %}
+      <form method="post" action="{{ url_for('connect', uid=creator.user_id) }}"><button class="btn sm" type="submit">{%
+          if conn and conn.status=='accepted' %}Connected{% elif conn and conn.status=='pending' %}Pending{% else
+          %}Connect{% endif %}</button></form>
+      <a class="btn sm ghost" href="{{ url_for('conversation', uid=creator.user_id) }}">Contact</a>
+      <form method="post" action="{{ url_for('follow', uid=creator.user_id) }}"><button class="btn sm ghost"
+          type="submit">{% if following %}Following{% else %}Follow{% endif %}</button></form>
+      {% if current_user.role == 'brand' %}
+      <form method="post" action="{{ url_for('save_creator', cid=creator.id) }}"><button class="btn sm ghost"
+          type="submit">{% if saved %}Saved{% else %}Save{% endif %}</button></form>
+      <a class="btn primary sm" href="{{ url_for('hire', cid=creator.id) }}">Hire</a>
+      {% endif %}
+      {% else %}
+      <a class="btn primary sm" href="{{ url_for('login') }}">Sign in to connect</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+<div class="wrap profile-sections">
+  <div>
+    <article class="panel">
+      <h2>About</h2>
+      <p>{{ creator.bio }}</p>
+      <p class="small muted">{{ summary }}</p>
+    </article>
+    <article class="panel" style="margin-top:1rem">
+      <h2>Portfolio</h2>
+      <div class="port-grid">
+        {% for p in creator.portfolio %}
+        <a class="work-card" href="{{ url_for('portfolio_detail', pid=p.id) }}">
+          <img src="{{ p.cover_image }}" alt="{{ p.title }}">
+          <div class="pad">
+            <h3>{{ p.title }}</h3>
+            <p class="small muted">{{ p.content_type }} · {{ p.tools|map(attribute='name')|join(', ') }}</p>
+            {% if p.verified %}<span class="vbadge l4 compact"
+              data-tip="This project was reviewed for process evidence.">✓ Portfolio piece verified</span>{% endif %}
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </article>
+    <article class="panel" style="margin-top:1rem">
+      <h2>Workflow</h2>
+      <p>{{ creator.workflow }}</p>
+    </article>
+    <article class="panel" style="margin-top:1rem">
+      <h2>Commercial usage</h2>
+      <p>{{ creator.commercial_use }}</p>
+    </article>
+    <article class="panel" style="margin-top:1rem">
+      <h2>Reviews</h2>
+      {% for r in creator.reviews %}
+      <p><strong>{{ r.brand.company }}</strong> · {{ r.rating }}/5<br>{{ r.body }}</p>
+      {% else %}
+      <p class="muted">No reviews yet.</p>
+      {% endfor %}
+    </article>
+  </div>
+  <aside>
+    <div class="stat-row">
+      <div class="stat"><strong>{{ creator.rating }}</strong>Rating</div>
+      <div class="stat"><strong>{{ creator.profile_views }}</strong>Views</div>
+      <div class="stat"><strong>{{ creator.completed_projects }}</strong>Projects</div>
+    </div>
+    <article class="panel" style="margin-top:1rem">
+      <h3>Skills</h3>
+      <p class="chip-row">{% for s in creator.skills %}<span class="chip">{{ s.name }}</span>{% endfor %}</p>
+      <h3>AI tools</h3>
+      <p class="small muted">Creator-declared{% if creator.tools_verified %}; tool list reviewed{% endif %}.</p>
+      <p class="chip-row">{% for t in creator.tools %}<span class="chip ghost">{{ t.name }}</span>{% endfor %}</p>
+      <h3>Specializations</h3>
+      <p class="chip-row">{% for s in creator.specializations %}<span class="chip">{{ s.name }}</span>{% endfor %}</p>
+      <h3>Experience</h3>
+      <p>{{ creator.experience_years }} years · ${{ creator.hourly_rate }}/hr · projects ${{ creator.project_rate_min
+        }}–{{ creator.project_rate_max }}</p>
+      <h3>Content types</h3>
+      <p>{{ creator.content_types }}</p>
+    </article>
+    <article class="panel" style="margin-top:1rem">
+      <h3>Similar creators</h3>
+      {% for r in related %}
+      <p><a href="{{ url_for('creator_profile', slug=r.slug) }}">{{ r.user.name }}</a><br><span class="small muted">{{
+          r.headline }}</span></p>
+      {% endfor %}
+    </article>
+  </aside>
+</div>
+{% endblock %}

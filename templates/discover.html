@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% from "_macros.html" import creator_card, empty %}
+{% block title %}Find AI Creators{% endblock %}
+{% block content %}
+<div class="wrap layout">
+  <aside class="card filters">
+    <h2 style="font-size:1.3rem">Filters</h2>
+    <form id="filterForm" method="get">
+      <label for="q">Search name, skill, tool</label>
+      <input id="q" name="q" value="{{ filters.get('q','') }}" placeholder="e.g. Runway, Aria, fashion">
+      <label for="skill">Skill</label>
+      <select id="skill" name="skill">
+        <option value="">Any</option>
+        {% for s in skills %}<option value="{{ s.name }}" {% if filters.get('skill')==s.name %}selected{% endif %}>{{ s.name }}</option>{% endfor %}
+      </select>
+      <label for="spec">Specialization</label>
+      <select id="spec" name="spec">
+        <option value="">Any</option>
+        {% for s in specs %}<option value="{{ s.name }}" {% if filters.get('spec')==s.name %}selected{% endif %}>{{ s.name }}</option>{% endfor %}
+      </select>
+      <label for="tool">AI tool / model</label>
+      <select id="tool" name="tool">
+        <option value="">Any</option>
+        {% for t in tools %}<option value="{{ t.name }}" {% if filters.get('tool')==t.name %}selected{% endif %}>{{ t.name }}</option>{% endfor %}
+      </select>
+      <label for="content">Content type</label>
+      <select id="content" name="content">
+        <option value="">Any</option>
+        {% for c in content_types %}<option value="{{ c }}" {% if filters.get('content')==c %}selected{% endif %}>{{ c }}</option>{% endfor %}
+      </select>
+      <label for="experience">Min. experience (years)</label>
+      <select id="experience" name="experience">
+        <option value="">Any</option>
+        {% for n in [2,4,6,8] %}<option value="{{ n }}" {% if filters.get('experience')==n|string %}selected{% endif %}>{{ n }}+</option>{% endfor %}
+      </select>
+      <label for="availability">Availability</label>
+      <select id="availability" name="availability">
+        <option value="">Any</option>
+        {% for a in ['Available','Limited','Booked'] %}<option {% if filters.get('availability')==a %}selected{% endif %}>{{ a }}</option>{% endfor %}
+      </select>
+      <label for="verification">Verification level</label>
+      <select id="verification" name="verification">
+        <option value="">Any</option>
+        <option value="2" {% if filters.get('verification')=='2' %}selected{% endif %}>Level 2+ Tools</option>
+        <option value="3" {% if filters.get('verification')=='3' %}selected{% endif %}>Level 3+ Workflow</option>
+        <option value="4" {% if filters.get('verification')=='4' %}selected{% endif %}>Level 4+ Portfolio</option>
+        <option value="5" {% if filters.get('verification')=='5' %}selected{% endif %}>Level 5 Trusted</option>
+      </select>
+      <label for="budget">Max hourly rate (USD)</label>
+      <select id="budget" name="budget">
+        <option value="">Any</option>
+        {% for n in [80,100,130,160,200] %}<option value="{{ n }}" {% if filters.get('budget')==n|string %}selected{% endif %}>≤ ${{ n }}</option>{% endfor %}
+      </select>
+      <input type="hidden" name="sort" value="{{ filters.get('sort','relevance') }}">
+      <p><button class="btn primary full" type="submit" style="margin-top:1rem">Apply filters</button></p>
+      <p><a class="btn ghost full" href="{{ url_for('discover') }}">Clear all filters</a></p>
+    </form>
+  </aside>
+  <div>
+    <p class="kicker">Creator discovery</p>
+    <h1 style="font-size:2.4rem">Find AI Creators</h1>
+    <p class="lede">Filter by declared skills, tools, and verification. Tools listed on cards are creator-declared unless a Tools Verified badge is present.</p>
+    <button class="btn ghost sm" type="button" id="openFilters">Filters</button>
+    <div class="active-chips">
+      {% for k,v in active.items() %}
+      <span class="chip">{{ k }}: {{ v }}</span>
+      {% endfor %}
+      {% if active %}<a class="chip" href="{{ url_for('discover') }}">Clear all</a>{% endif %}
+    </div>
+    <div class="toolbar">
+      <p class="muted">{{ creators|length }} creators</p>
+      <form method="get">
+        {% for k,v in filters.items() if k != 'sort' %}
+        <input type="hidden" name="{{ k }}" value="{{ v }}">
+        {% endfor %}
+        <label class="sr-only" for="sort">Sort</label>
+        <select id="sort" name="sort" onchange="this.form.submit()">
+          <option value="relevance" {% if filters.get('sort')=='relevance' %}selected{% endif %}>Sort: verification</option>
+          <option value="rating" {% if filters.get('sort')=='rating' %}selected{% endif %}>Rating</option>
+          <option value="views" {% if filters.get('sort')=='views' %}selected{% endif %}>Profile views</option>
+          <option value="rate_low" {% if filters.get('sort')=='rate_low' %}selected{% endif %}>Rate: low to high</option>
+          <option value="rate_high" {% if filters.get('sort')=='rate_high' %}selected{% endif %}>Rate: high to low</option>
+        </select>
+      </form>
+    </div>
+    {% if not creators %}
+      {{ empty("No creators match these filters.", "Broaden a skill, tool, or verification level.", url_for('discover'), "Clear filters") }}
+    {% else %}
+    <div class="results-grid">
+      {% for c in creators %}
+        {{ creator_card(c, badges_fn) }}
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/discover.js') }}"></script>{% endblock %}

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% from "_macros.html" import badges %}
+{% block title %}Brand dashboard{% endblock %}
+{% block content %}
+<div class="wrap" style="padding:2rem 0 4rem">
+  <p class="kicker">Brand dashboard</p>
+  <div class="toolbar">
+    <h1>{{ brand.company }}</h1>
+    <div>
+      <a class="btn" href="{{ url_for('discover') }}">Discover creators</a>
+      <a class="btn primary" href="{{ url_for('create_brief') }}">Create new brief</a>
+    </div>
+  </div>
+  <div class="grid-4">
+    <article class="card metric"><strong>{{ briefs|length }}</strong><p class="muted">Active briefs</p></article>
+    <article class="card metric"><strong>{{ applications|length }}</strong><p class="muted">Applications</p></article>
+    <article class="card metric"><strong>{{ saved|length }}</strong><p class="muted">Saved / shortlisted</p></article>
+    <article class="card metric"><strong>{{ projects|length }}</strong><p class="muted">Projects</p></article>
+  </div>
+  <div class="dash-grid">
+    <div>
+      <article class="panel">
+        <h2>Active briefs</h2>
+        {% for b in briefs %}
+        <p><a href="{{ url_for('brief_detail', bid=b.id) }}">{{ b.title }}</a> · {{ b.status }} · {{ b.applications|length }} applications</p>
+        {% else %}
+        <p class="muted">No briefs yet. <a href="{{ url_for('create_brief') }}">Create one</a>.</p>
+        {% endfor %}
+      </article>
+      <article class="panel" style="margin-top:1rem">
+        <h2>Applications</h2>
+        {% for a in applications %}
+        <div class="person-row">
+          <div class="grow">{{ a.creator.user.name }} → {{ a.brief.title }} · {{ a.status }}</div>
+          <a class="btn sm ghost" href="{{ url_for('brief_detail', bid=a.brief_id) }}">Review</a>
+        </div>
+        {% else %}
+        <p class="muted">No applications yet.</p>
+        {% endfor %}
+      </article>
+      <article class="panel" style="margin-top:1rem">
+        <h2>Projects</h2>
+        {% for p in projects %}
+        <p><a href="{{ url_for('project_detail', pid=p.id) }}">{{ p.title }}</a> · {{ p.stage }} {% if p.stage=='Completed' %}(completed){% else %}(active){% endif %}</p>
+        {% else %}
+        <p class="muted">Hire from a profile or accept an application to open a project.</p>
+        {% endfor %}
+      </article>
+    </div>
+    <aside>
+      <article class="panel">
+        <h3>Shortlisted / saved creators</h3>
+        {% for s in saved %}
+        <div class="person-row">
+          <img class="avatar sm" src="{{ s.creator.user.avatar }}" alt="">
+          <div class="grow">
+            <a href="{{ url_for('creator_profile', slug=s.creator.slug) }}">{{ s.creator.user.name }}</a>
+            {{ badges(badges_fn(s.creator), compact=true) }}
+          </div>
+        </div>
+        {% else %}
+        <p class="muted">No saved creators. <a href="{{ url_for('discover') }}">Find creators</a>.</p>
+        {% endfor %}
+        <p><a href="{{ url_for('saved') }}">Open saved list</a></p>
+        <p><a href="{{ url_for('connections') }}">Connections</a> · <a href="{{ url_for('messages') }}">Messages</a></p>
+      </article>
+    </aside>
+  </div>
+</div>
+{% endblock %}

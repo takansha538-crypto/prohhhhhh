@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% from "_macros.html" import empty %}
+{% block title %}Messages{% endblock %}
+{% block content %}
+<div class="wrap" style="padding:2rem 0 4rem">
+  <h1>Messages</h1>
+  <div class="messages">
+    <aside class="conv-list">
+      <form class="search-bar" style="padding:0.6rem" onsubmit="return false">
+        <label class="sr-only" for="csearch">Search conversations</label>
+        <input id="csearch" placeholder="Search names" oninput="document.querySelectorAll('.conv-list a[data-name]').forEach(a=>a.style.display=a.dataset.name.includes(this.value.toLowerCase())?'flex':'none')">
+      </form>
+      {% for person, last in people %}
+      <a class="{% if active and active.id==person.id %}active{% endif %}" data-name="{{ person.name|lower }}" href="{{ url_for('conversation', uid=person.id) }}">
+        <img class="avatar sm" src="{{ person.avatar }}" alt="">
+        <div>
+          <strong>{{ person.name }}</strong>
+          <p class="small muted">{{ last.body[:60] }}</p>
+        </div>
+      </a>
+      {% else %}
+      <div style="padding:1rem">{{ empty("No messages yet.", "Connect with a creator or brand, then start a conversation.", url_for('discover'), "Find people") }}</div>
+      {% endfor %}
+    </aside>
+    <section class="chat">
+      {% if active %}
+      <header class="person-row" style="padding:0.8rem;margin:0;border-bottom:1px solid var(--line)">
+        <img class="avatar sm" src="{{ active.avatar }}" alt="">
+        <div class="grow">
+          <strong>{{ active.name }}</strong>
+          <p class="small muted">{{ active.role|title }}{% if active.brand_profile %} · {{ active.brand_profile.company }}{% endif %}{% if active.creator_profile %} · {{ active.creator_profile.headline }}{% endif %}</p>
+        </div>
+      </header>
+      <div class="chat-log">
+        {% for m in thread %}
+        <div class="bubble {% if m.sender_id==current_user.id %}mine{% endif %}">
+          {{ m.body }}
+          {% if m.attachment_type == 'portfolio' and m.attachment_id %}
+          <div class="attach">Attached portfolio #{{ m.attachment_id }} · <a href="{{ url_for('portfolio_detail', pid=m.attachment_id) }}">Open</a></div>
+          {% elif m.attachment_type == 'brief' and m.attachment_id %}
+          <div class="attach">Attached brief #{{ m.attachment_id }} · <a href="{{ url_for('brief_detail', bid=m.attachment_id) }}">Open</a></div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      <form class="chat-form" method="post">
+        <label class="sr-only" for="body">Message</label>
+        <input id="body" name="body" required placeholder="Write a professional message">
+        <select name="attachment_type" aria-label="Attach">
+          <option value="">No attachment</option>
+          <option value="portfolio">Portfolio</option>
+          <option value="brief">Brief</option>
+        </select>
+        <input name="attachment_id" type="number" placeholder="ID" aria-label="Attachment id" style="max-width:90px">
+        <button class="btn primary" type="submit">Send</button>
+      </form>
+      {% else %}
+      <div class="empty-state">
+        <h2>Select a conversation</h2>
+        <p>Messages in this prototype are stored locally in SQLite.</p>
+      </div>
+      {% endif %}
+    </section>
+  </div>
+</div>
+{% endblock %}

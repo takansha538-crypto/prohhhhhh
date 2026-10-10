@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Hire {{ creator.user.name }}{% endblock %}
+{% block content %}
+<div class="wrap" style="padding:2rem 0 4rem;max-width:640px">
+  <h1>Hire {{ creator.user.name }}</h1>
+  <p class="muted">Opens a project at the Hire stage. You can attach one of your briefs optionally.</p>
+  <form method="post" class="panel">
+    <label for="title">Project title</label>
+    <input id="title" name="title" value="Engagement with {{ creator.user.name }}">
+    <label for="budget">Budget (USD)</label>
+    <input id="budget" name="budget" type="number" value="{{ creator.project_rate_min }}">
+    <label for="brief_id">Link a brief (optional ID)</label>
+    <select id="brief_id" name="brief_id">
+      <option value="">None</option>
+      {% if current_user.brand_profile %}
+      {% for b in current_user.brand_profile.briefs %}
+      <option value="{{ b.id }}">{{ b.title }}</option>
+      {% endfor %}
+      {% endif %}
+    </select>
+    <label for="notes">Notes</label>
+    <textarea id="notes" name="notes"></textarea>
+    <p><button class="btn primary" type="submit">Confirm hire</button></p>
+  </form>
+</div>
+{% endblock %}

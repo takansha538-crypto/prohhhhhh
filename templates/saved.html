@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% from "_macros.html" import badges, empty %}
+{% block title %}Saved creators{% endblock %}
+{% block content %}
+<div class="wrap" style="padding:2rem 0 4rem">
+  <h1>Saved creators</h1>
+  {% if not items %}
+    {{ empty("No saved creators.", "Save from a profile to build a shortlist.", url_for('discover'), "Find creators") }}
+  {% else %}
+  {% for s in items %}
+  <div class="person-row">
+    <img class="avatar sm" src="{{ s.creator.user.avatar }}" alt="">
+    <div class="grow">
+      <a href="{{ url_for('creator_profile', slug=s.creator.slug) }}">{{ s.creator.user.name }}</a>
+      <p class="small muted">{{ s.creator.headline }} · {{ s.creator.specializations|map(attribute='name')|join(', ') }}</p>
+      {{ badges(badges_fn(s.creator), compact=true) }}
+      <p class="small muted">Saved {{ s.created_at.strftime('%d %b %Y') }}</p>
+    </div>
+    <a class="btn sm ghost" href="{{ url_for('conversation', uid=s.creator.user_id) }}">Contact</a>
+    <a class="btn sm primary" href="{{ url_for('hire', cid=s.creator.id) }}">Hire</a>
+  </div>
+  {% endfor %}
+  {% endif %}
+</div>
+{% endblock %}

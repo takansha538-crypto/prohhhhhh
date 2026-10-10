@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+  <rect width="160" height="160" fill="#3B332C"/>
+  <circle cx="80" cy="62" r="28" fill="#E8D2B8"/>
+  <ellipse cx="80" cy="148" rx="48" ry="40" fill="#E8D2B8"/>
+  <text x="80" y="28" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#F3EFE8">DS</text>
+</svg>

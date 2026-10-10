@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% from "_macros.html" import badges %}
+{% block title %}{{ project.title }}{% endblock %}
+{% block content %}
+<div class="wrap" style="padding:2rem 0 4rem">
+  <p class="kicker">Portfolio</p>
+  <h1>{{ project.title }}</h1>
+  <p class="lede">{{ project.description }}</p>
+  <div class="grid-2">
+    <div class="hero-preview">
+      <img src="{{ project.cover_image }}" alt="Preview of {{ project.title }}">
+    </div>
+    <aside class="panel">
+      <p><a href="{{ url_for('creator_profile', slug=project.creator.slug) }}">{{ project.creator.user.name }}</a></p>
+      {{ badges(badges_fn(project.creator), compact=true) }}
+      <dl class="meta-list">
+        <dt>Content type</dt><dd>{{ project.content_type }}</dd>
+        <dt>Aspect ratio</dt><dd>{{ project.aspect_ratio }}</dd>
+        <dt>AI tools / models used</dt><dd>{{ project.tools|map(attribute='name')|join(', ') }}</dd>
+        <dt>Skills</dt><dd>{{ project.skills|map(attribute='name')|join(', ') }}</dd>
+        <dt>Workflow</dt><dd>{{ project.workflow }}</dd>
+        <dt>Commercial-use status</dt><dd>{{ project.commercial_use }}</dd>
+        <dt>License</dt><dd>{{ project.license_info }}</dd>
+        <dt>Project outcome</dt><dd>{{ project.outcome }}</dd>
+        <dt>Verification</dt><dd>{% if project.verified %}This piece was reviewed as part of Portfolio Verified.{% else %}Process described by the creator; not independently reviewed.{% endif %}</dd>
+      </dl>
+      <p style="margin-top:1rem"><a class="btn primary sm" href="{{ url_for('creator_profile', slug=project.creator.slug) }}">View profile</a>
+      {% if current_user and current_user.role=='brand' %}<a class="btn sm" href="{{ url_for('hire', cid=project.creator.id) }}">Hire</a>{% endif %}</p>
+    </aside>
+  </div>
+  <h2 style="margin-top:2rem">Related work</h2>
+  <div class="grid-4">
+    {% for r in related %}
+    <a class="work-card" href="{{ url_for('portfolio_detail', pid=r.id) }}">
+      <img src="{{ r.cover_image }}" alt="{{ r.title }}">
+      <div class="pad"><h3>{{ r.title }}</h3></div>
+    </a>
+    {% else %}
+    <p class="muted">No other projects on this profile yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% from "_macros.html" import empty %}
+{% block title %}Applications{% endblock %}
+{% block content %}
+<div class="wrap" style="padding:2rem 0 4rem">
+  <h1>Applications</h1>
+  {% if not applications %}
+    {{ empty("No applications yet.", "Creators apply from a brief. Brands review from this list.", url_for('briefs'), "Browse briefs") }}
+  {% else %}
+  {% for a in applications %}
+  <article class="panel" style="margin-bottom:0.8rem">
+    <h3>{{ a.brief.title }}</h3>
+    <p>{{ a.creator.user.name }} → {{ a.brief.brand.company }}</p>
+    <p>{{ a.cover_message }}</p>
+    <p class="small">Budget ${{ a.proposed_budget }} · {{ a.estimated_delivery }} · Status: <strong>{{ a.status }}</strong></p>
+    <p class="small muted">Portfolio: {% for p in a.portfolio_items %}<a href="{{ url_for('portfolio_detail', pid=p.id) }}">{{ p.title }}</a> {% else %}None attached{% endfor %}</p>
+    {% if current_user.role=='brand' %}
+    <form method="post" action="{{ url_for('application_status', aid=a.id) }}" class="row-actions">
+      <label class="sr-only" for="st{{ a.id }}">Status</label>
+      <select id="st{{ a.id }}" name="status">
+        {% for s in ['Applied','Shortlisted','Interview','Accepted','Rejected','Completed'] %}
+        <option {% if a.status==s %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn sm primary" type="submit">Update</button>
+    </form>
+    {% endif %}
+  </article>
+  {% endfor %}
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% from "_macros.html" import badges %}
+{% block title %}CreatorsHub{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="wrap">
+    <p class="kicker">AI-native creative marketplace</p>
+    <h1>Where AI Creators Meet<br>Ambitious Brands.</h1>
+    <p class="lede">CreatorsHub is the professional marketplace where brands discover, verify, connect with, and hire AI-native filmmakers, designers, and generative artists — with workflows, licensing, and trust signals built in.</p>
+    <div class="hero-actions">
+      <a class="btn primary" href="{{ url_for('discover') }}">Find AI Creators</a>
+      <a class="btn" href="{{ url_for('create_brief') }}">Create a Brief</a>
+    </div>
+    <div class="hero-stats">
+      <div><strong data-count="15">15</strong><span class="muted">Verified-ready creator profiles</span></div>
+      <div><strong data-count="9">9</strong><span class="muted">Live commercial briefs</span></div>
+      <div><strong>L1–L5</strong><span class="muted">Transparent verification</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section alt" id="how">
+  <div class="wrap">
+    <p class="kicker">How it works</p>
+    <h2>From discovery to delivery, without a generic freelance board.</h2>
+    <div class="grid-3">
+      <article class="card step-card">
+        <div class="step-num">01</div>
+        <h3>Discover with AI-native filters</h3>
+        <p>Search by tool, specialization, commercial rate, and verification — not just a keyword and a star rating.</p>
+      </article>
+      <article class="card step-card">
+        <div class="step-num">02</div>
+        <h3>Read the workflow, not just the still</h3>
+        <p>Every portfolio names models, process, license, and commercial-use status so legal teams can evaluate before a call.</p>
+      </article>
+      <article class="card step-card">
+        <div class="step-num">03</div>
+        <h3>Brief, match, hire, track</h3>
+        <p>Publish a structured brief, see rule-based AI Match scores, shortlist, message, and run a lightweight project pipeline.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <p class="kicker">Featured creators</p>
+    <h2>Directors and specialists already working commercially.</h2>
+    <div class="results-grid">
+      {% for c in featured %}
+      <article class="creator-card">
+        <a class="card-media" href="{{ url_for('creator_profile', slug=c.slug) }}">
+          {% if c.portfolio %}
+          <img src="{{ c.portfolio[0].cover_image }}" alt="{{ c.portfolio[0].title }}">
+          {% endif %}
+        </a>
+        <div class="card-body">
+          <div class="card-head">
+            <img class="avatar sm" src="{{ c.user.avatar }}" alt="">
+            <div>
+              <h3><a href="{{ url_for('creator_profile', slug=c.slug) }}">{{ c.user.name }}</a></h3>
+              <p class="muted small">{{ c.headline }}</p>
+            </div>
+          </div>
+          {{ badges(badges_fn(c), compact=true) }}
+          <a class="btn sm ghost" href="{{ url_for('creator_profile', slug=c.slug) }}">View portfolio</a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section alt">
+  <div class="wrap">
+    <p class="kicker">AI creator categories</p>
+    <h2>Specializations this marketplace is built around.</h2>
+    <div class="grid-4">
+      {% for s in specs %}
+      <a class="card cat-card" href="{{ url_for('discover', spec=s.name) }}">
+        <h3>{{ s.name }}</h3>
+        <p class="muted small">Filter the roster to this practice.</p>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <p class="kicker">Verified creators</p>
+    <h2>Trust badges with explanations, not decorative seals.</h2>
+    <p class="lede">Level 1 Profile · Level 2 Tools · Level 3 Workflow · Level 4 Portfolio · Level 5 Trusted. Hover any badge in the product to read what was reviewed.</p>
+    <div class="grid-4">
+      {% for c in trusted %}
+      <article class="card panel">
+        <img class="avatar md" src="{{ c.user.avatar }}" alt="">
+        <h3>{{ c.user.name }}</h3>
+        <p class="small muted">{{ c.headline }}</p>
+        {{ badges(badges_fn(c)) }}
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section alt">
+  <div class="wrap">
+    <p class="kicker">Featured work</p>
+    <h2>Commercial-looking AI production, with process attached.</h2>
+    <div class="grid-4">
+      {% for w in work %}
+      <a class="work-card" href="{{ url_for('portfolio_detail', pid=w.id) }}">
+        <img src="{{ w.cover_image }}" alt="{{ w.title }}">
+        <div class="pad">
+          <h3>{{ w.title }}</h3>
+          <p class="small muted">{{ w.creator.user.name }} · {{ w.content_type }}</p>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section" id="why">
+  <div class="wrap">
+    <p class="kicker">Why CreatorsHub</p>
+    <h2>Freelance sites were not designed for generative production.</h2>
+    <div class="grid-3">
+      <article class="card why-card">
+        <h3>Verify capability</h3>
+        <p>Brands can see whether a creator’s tools, workflow, and portfolio have been reviewed — and what that actually means.</p>
+      </article>
+      <article class="card why-card">
+        <h3>Structure the brief</h3>
+        <p>Content type, aspect ratio, commercial-use, revisions, and preferred models live in one brief, optionally drafted by an AI assistant.</p>
+      </article>
+      <article class="card why-card">
+        <h3>Engage through delivery</h3>
+        <p>Connect, message, hire, and track Discovery → Completed without leaving the marketplace.</p>
+      </article>
+    </div>
+    <p class="lede" style="margin-top:1.5rem">This prototype’s matching is transparent and rule-based (skills, tools, specialization, budget, availability). It is not a trained ML model.</p>
+  </div>
+</section>
+
+<section class="section alt">
+  <div class="wrap" style="text-align:center">
+    <h2>Start the judging demo in two clicks.</h2>
+    <p class="lede" style="margin-inline:auto">No account creation required.</p>
+    <div class="hero-actions" style="justify-content:center">
+      <a class="btn primary" href="{{ url_for('demo_brand') }}">Demo as Brand</a>
+      <a class="btn" href="{{ url_for('demo_creator') }}">Demo as Creator</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

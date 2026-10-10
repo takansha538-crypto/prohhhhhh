@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Presentation{% endblock %}
+{% block content %}
+<div class="wrap" style="padding:2.5rem 0 4rem">
+  <p class="kicker">Internal presentation</p>
+  <h1>CreatorsHub for judges</h1>
+  <article class="panel"><h2>Problem</h2><p>Brands cannot discover, evaluate, or license AI-native creators through generic freelance marketplaces. Portfolios hide tools, workflows, and commercial-use terms.</p></article>
+  <article class="panel" style="margin-top:1rem"><h2>Solution</h2><p>A professional marketplace with AI portfolios, structured briefs, verification signals, matching, and an engagement pipeline from discovery to delivery.</p></article>
+  <article class="panel" style="margin-top:1rem"><h2>How CreatorsHub works</h2><p>Find Creators → read workflow and license → publish a brief → see AI Match → connect → hire → track stages.</p></article>
+  <article class="panel" style="margin-top:1rem"><h2>Verification</h2><p>Five levels: Profile, Tools, Workflow, Portfolio, Trusted. Badges explain what was reviewed. Declared tools are not vendor certifications unless the matching badge is present.</p></article>
+  <article class="panel" style="margin-top:1rem"><h2>AI-assisted brief builder</h2><p>Turns a sentence into a structured brief. Uses a live API if a key exists; otherwise a local intelligent layer. Core product never depends on the key.</p></article>
+  <article class="panel" style="margin-top:1rem"><h2>Creator matching</h2><p>Transparent scoring on skills, tools, specialization, availability, budget, verification. Scores show why — not a black-box ML claim.</p></article>
+  <article class="panel" style="margin-top:1rem"><h2>Marketplace workflow</h2><p>Discovery → Brief → Shortlist → Connect → Hire → Production → Review → Delivery → Completed.</p></article>
+  <article class="panel" style="margin-top:1rem"><h2>Future scope</h2><p>Live model-card ingestion, escrow, versioned generation history, and agency seats. This prototype is launch-shaped, not a slide deck with buttons.</p></article>
+  <p style="margin-top:1.2rem"><a class="btn primary" href="{{ url_for('demo_brand') }}">Begin brand demo</a></p>
+</div>
+{% endblock %}
